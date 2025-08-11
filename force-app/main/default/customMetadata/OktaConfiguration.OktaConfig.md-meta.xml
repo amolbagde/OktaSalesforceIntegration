@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Okta Configuration</label>
+    <protected>false</protected>
+    <values>
+        <field>OktaDomain__c</field>
+        <value xsi:type="xsd:string">your-okta-domain.okta.com</value>
+    </values>
+    <values>
+        <field>ClientId__c</field>
+        <value xsi:type="xsd:string">your-client-id</value>
+    </values>
+    <values>
+        <field>ClientSecret__c</field>
+        <value xsi:type="xsd:string">your-client-secret</value>
+    </values>
+    <values>
+        <field>RedirectUri__c</field>
+        <value xsi:type="xsd:string">https://your-community.force.com/auth/callback</value>
+    </values>
+    <values>
+        <field>ApiToken__c</field>
+        <value xsi:type="xsd:string">your-api-token</value>
+    </values>
+</CustomMetadata>

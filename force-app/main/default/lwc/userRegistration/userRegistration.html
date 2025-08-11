@@ -1,0 +1,170 @@
+<template>
+    <div class="registration-container">
+        <div class="registration-card">
+            <div class="registration-header">
+                <lightning-icon icon-name="standard:person_account" size="large" class="registration-icon"></lightning-icon>
+                <h1 class="registration-title">Create Account</h1>
+                <p class="registration-subtitle">Join our community today</p>
+            </div>
+
+            <div class="registration-form">
+                <div class="form-row">
+                    <div class="form-group half-width">
+                        <lightning-input
+                            label="First Name"
+                            type="text"
+                            value={firstName}
+                            onchange={handleFirstNameChange}
+                            onkeypress={handleKeyPress}
+                            placeholder="Enter your first name"
+                            required
+                            variant="label-stacked"
+                            data-field="firstName"
+                            class="registration-input">
+                        </lightning-input>
+                    </div>
+                    <div class="form-group half-width">
+                        <lightning-input
+                            label="Last Name"
+                            type="text"
+                            value={lastName}
+                            onchange={handleLastNameChange}
+                            onkeypress={handleKeyPress}
+                            placeholder="Enter your last name"
+                            required
+                            variant="label-stacked"
+                            data-field="lastName"
+                            class="registration-input">
+                        </lightning-input>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <lightning-input
+                        label="Email Address"
+                        type="email"
+                        value={email}
+                        onchange={handleEmailChange}
+                        onkeypress={handleKeyPress}
+                        placeholder="Enter your email address"
+                        required
+                        variant="label-stacked"
+                        data-field="email"
+                        class="registration-input">
+                    </lightning-input>
+                </div>
+
+                <div class="form-group">
+                    <div class="password-container">
+                        <lightning-input
+                            label="Password"
+                            type={passwordInputType}
+                            value={password}
+                            onchange={handlePasswordChange}
+                            onkeypress={handleKeyPress}
+                            placeholder="Create a strong password"
+                            required
+                            variant="label-stacked"
+                            data-field="password"
+                            class="registration-input password-input">
+                        </lightning-input>
+                        <lightning-button-icon
+                            icon-name={passwordToggleIcon}
+                            variant="bare"
+                            onclick={togglePasswordVisibility}
+                            alternative-text="Toggle password visibility"
+                            class="password-toggle">
+                        </lightning-button-icon>
+                    </div>
+                    
+                    <template if:true={password}>
+                        <div class="password-strength">
+                            <div class="strength-bar">
+                                <div class={passwordStrength.class} style={passwordStrength.width}></div>
+                            </div>
+                            <span class="strength-text">{passwordStrength.text}</span>
+                        </div>
+                    </template>
+                    
+                    <div class="password-requirements">
+                        <ul>
+                            <li>At least 8 characters</li>
+                            <li>One uppercase letter</li>
+                            <li>One lowercase letter</li>
+                            <li>One number</li>
+                            <li>One special character (@$!%*?&)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="password-container">
+                        <lightning-input
+                            label="Confirm Password"
+                            type={confirmPasswordInputType}
+                            value={confirmPassword}
+                            onchange={handleConfirmPasswordChange}
+                            onkeypress={handleKeyPress}
+                            placeholder="Confirm your password"
+                            required
+                            variant="label-stacked"
+                            data-field="confirmPassword"
+                            class="registration-input password-input">
+                        </lightning-input>
+                        <lightning-button-icon
+                            icon-name={confirmPasswordToggleIcon}
+                            variant="bare"
+                            onclick={toggleConfirmPasswordVisibility}
+                            alternative-text="Toggle confirm password visibility"
+                            class="password-toggle">
+                        </lightning-button-icon>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <lightning-input
+                        type="checkbox"
+                        label="I agree to the Terms and Conditions and Privacy Policy"
+                        checked={agreeToTerms}
+                        onchange={handleTermsChange}
+                        variant="label-inline"
+                        class="terms-checkbox">
+                    </lightning-input>
+                </div>
+
+                <div class="form-actions">
+                    <lightning-button
+                        label="Create Account"
+                        variant="brand"
+                        onclick={handleRegister}
+                        disabled={isRegisterDisabled}
+                        class="register-button">
+                    </lightning-button>
+                    
+                    <template if:true={isLoading}>
+                        <div class="loading-overlay">
+                            <lightning-spinner 
+                                alternative-text="Creating account..." 
+                                size="medium">
+                            </lightning-spinner>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="divider">
+                    <span class="divider-text">or</span>
+                </div>
+
+                <div class="login-section">
+                    <p class="login-text">Already have an account?</p>
+                    <lightning-button
+                        label="Sign In"
+                        variant="neutral"
+                        onclick={handleLoginClick}
+                        class="login-button">
+                    </lightning-button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

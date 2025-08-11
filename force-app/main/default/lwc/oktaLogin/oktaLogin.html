@@ -1,0 +1,92 @@
+<template>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <lightning-icon icon-name="standard:user" size="large" class="login-icon"></lightning-icon>
+                <h1 class="login-title">Welcome Back</h1>
+                <p class="login-subtitle">Sign in to your account</p>
+            </div>
+
+            <div class="login-form">
+                <div class="form-group">
+                    <lightning-input
+                        label="Email or Username"
+                        type="email"
+                        value={username}
+                        onchange={handleUsernameChange}
+                        onkeypress={handleKeyPress}
+                        placeholder="Enter your email or username"
+                        required
+                        variant="label-stacked"
+                        class="login-input">
+                    </lightning-input>
+                </div>
+
+                <div class="form-group">
+                    <div class="password-container">
+                        <lightning-input
+                            label="Password"
+                            type={passwordInputType}
+                            value={password}
+                            onchange={handlePasswordChange}
+                            onkeypress={handleKeyPress}
+                            placeholder="Enter your password"
+                            required
+                            variant="label-stacked"
+                            class="login-input password-input">
+                        </lightning-input>
+                        <lightning-button-icon
+                            icon-name={passwordToggleIcon}
+                            variant="bare"
+                            onclick={togglePasswordVisibility}
+                            alternative-text="Toggle password visibility"
+                            class="password-toggle">
+                        </lightning-button-icon>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <lightning-button
+                        label="Sign In"
+                        variant="brand"
+                        onclick={handleLogin}
+                        disabled={isLoginDisabled}
+                        class="login-button">
+                    </lightning-button>
+                    
+                    <template if:true={isLoading}>
+                        <div class="loading-overlay">
+                            <lightning-spinner 
+                                alternative-text="Signing in..." 
+                                size="medium">
+                            </lightning-spinner>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="form-links">
+                    <lightning-button
+                        label="Forgot Password?"
+                        variant="base"
+                        onclick={handleForgotPasswordClick}
+                        class="link-button">
+                    </lightning-button>
+                </div>
+
+                <div class="divider">
+                    <span class="divider-text">or</span>
+                </div>
+
+                <div class="register-section">
+                    <p class="register-text">Don't have an account?</p>
+                    <lightning-button
+                        label="Create Account"
+                        variant="neutral"
+                        onclick={handleRegisterClick}
+                        class="register-button">
+                    </lightning-button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,195 @@
+<template>
+    <div class="profile-container">
+        <div class="profile-card">
+            <template if:true={isLoading}>
+                <div class="loading-overlay">
+                    <lightning-spinner alternative-text="Loading..." size="medium"></lightning-spinner>
+                </div>
+            </template>
+
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <img src={profileImage} alt="Profile Picture" class="avatar-image">
+                    <div class="avatar-initials">{initials}</div>
+                </div>
+                <div class="profile-info">
+                    <h1 class="profile-name">{displayName}</h1>
+                    <p class="profile-email">{email}</p>
+                </div>
+                <div class="profile-actions">
+                    <lightning-button-menu
+                        alternative-text="Profile Actions"
+                        icon-name="utility:down"
+                        variant="border-filled"
+                        menu-alignment="right">
+                        <lightning-menu-item
+                            value="logout"
+                            label="Logout"
+                            onclick={handleLogout}
+                            icon-name="utility:logout">
+                        </lightning-menu-item>
+                    </lightning-button-menu>
+                </div>
+            </div>
+
+            <!-- Profile Content -->
+            <div class="profile-content">
+                <div class="section-header">
+                    <h2 class="section-title">Personal Information</h2>
+                    <template if:false={isEditing}>
+                        <lightning-button
+                            label="Edit Profile"
+                            variant="neutral"
+                            onclick={handleEditClick}
+                            icon-name="utility:edit"
+                            class="edit-button">
+                        </lightning-button>
+                    </template>
+                </div>
+
+                <div class="profile-form">
+                    <div class="form-row">
+                        <div class="form-group half-width">
+                            <lightning-input
+                                label="First Name"
+                                type="text"
+                                value={firstName}
+                                onchange={handleFirstNameChange}
+                                placeholder="Enter your first name"
+                                required
+                                variant="label-stacked"
+                                data-field="firstName"
+                                disabled={isEditing}
+                                class="profile-input">
+                            </lightning-input>
+                        </div>
+                        <div class="form-group half-width">
+                            <lightning-input
+                                label="Last Name"
+                                type="text"
+                                value={lastName}
+                                onchange={handleLastNameChange}
+                                placeholder="Enter your last name"
+                                required
+                                variant="label-stacked"
+                                data-field="lastName"
+                                disabled={isEditing}
+                                class="profile-input">
+                            </lightning-input>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <lightning-input
+                            label="Email Address"
+                            type="email"
+                            value={email}
+                            onchange={handleEmailChange}
+                            placeholder="Enter your email address"
+                            required
+                            variant="label-stacked"
+                            data-field="email"
+                            disabled={isEditing}
+                            class="profile-input">
+                        </lightning-input>
+                    </div>
+
+                    <template if:true={isEditing}>
+                        <div class="form-actions">
+                            <lightning-button
+                                label="Cancel"
+                                variant="neutral"
+                                onclick={handleCancelEdit}
+                                class="cancel-button">
+                            </lightning-button>
+                            <lightning-button
+                                label="Save Changes"
+                                variant="brand"
+                                onclick={handleSaveProfile}
+                                disabled={isSaveDisabled}
+                                class="save-button">
+                            </lightning-button>
+                        </div>
+                        
+                        <template if:true={hasChanges}>
+                            <div class="changes-indicator">
+                                <lightning-icon icon-name="utility:info" size="x-small"></lightning-icon>
+                                <span>You have unsaved changes</span>
+                            </div>
+                        </template>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Additional Sections -->
+            <div class="profile-sections">
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">Account Security</h3>
+                    </div>
+                    <div class="section-content">
+                        <div class="security-item">
+                            <div class="security-info">
+                                <h4>Password</h4>
+                                <p>Last updated 30 days ago</p>
+                            </div>
+                            <lightning-button
+                                label="Change Password"
+                                variant="neutral"
+                                class="security-action">
+                            </lightning-button>
+                        </div>
+                        
+                        <div class="security-item">
+                            <div class="security-info">
+                                <h4>Two-Factor Authentication</h4>
+                                <p>Enhance your account security</p>
+                            </div>
+                            <lightning-button
+                                label="Configure"
+                                variant="neutral"
+                                class="security-action">
+                            </lightning-button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <h3 class="section-title">Preferences</h3>
+                    </div>
+                    <div class="section-content">
+                        <div class="preference-item">
+                            <lightning-input
+                                type="checkbox"
+                                label="Email notifications"
+                                checked
+                                variant="label-inline"
+                                class="preference-checkbox">
+                            </lightning-input>
+                        </div>
+                        
+                        <div class="preference-item">
+                            <lightning-input
+                                type="checkbox"
+                                label="SMS notifications"
+                                variant="label-inline"
+                                class="preference-checkbox">
+                            </lightning-input>
+                        </div>
+                        
+                        <div class="preference-item">
+                            <lightning-input
+                                type="checkbox"
+                                label="Marketing communications"
+                                variant="label-inline"
+                                class="preference-checkbox">
+                            </lightning-input>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
