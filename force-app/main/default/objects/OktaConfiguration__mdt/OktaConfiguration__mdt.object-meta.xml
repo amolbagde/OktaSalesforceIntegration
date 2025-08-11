@@ -37,4 +37,57 @@
         <length>255</length>
         <required>true</required>
     </fields>
+    <fields>
+        <fullName>AuthenticationMethod__c</fullName>
+        <label>Authentication Method</label>
+        <type>Picklist</type>
+        <required>true</required>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <value>
+                    <fullName>OAuth</fullName>
+                    <default>false</default>
+                    <label>OAuth 2.0</label>
+                </value>
+                <value>
+                    <fullName>SAML</fullName>
+                    <default>true</default>
+                    <label>SAML 2.0</label>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>SamlIssuer__c</fullName>
+        <label>SAML Issuer</label>
+        <type>Text</type>
+        <length>255</length>
+        <required>false</required>
+    </fields>
+    <fields>
+        <fullName>SamlSsoUrl__c</fullName>
+        <label>SAML SSO URL</label>
+        <type>Url</type>
+        <required>false</required>
+    </fields>
+    <fields>
+        <fullName>SamlCertificate__c</fullName>
+        <label>SAML Certificate</label>
+        <type>LongTextArea</type>
+        <length>32768</length>
+        <required>false</required>
+    </fields>
+    <fields>
+        <fullName>SamlCallbackUrl__c</fullName>
+        <label>SAML Callback URL</label>
+        <type>Url</type>
+        <required>false</required>
+    </fields>
+    <fields>
+        <fullName>SamlLogoutUrl__c</fullName>
+        <label>SAML Logout URL</label>
+        <type>Url</type>
+        <required>false</required>
+    </fields>
 </CustomObject>

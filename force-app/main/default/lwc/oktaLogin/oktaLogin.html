@@ -8,49 +8,73 @@
             </div>
 
             <div class="login-form">
-                <div class="form-group">
-                    <lightning-input
-                        label="Email or Username"
-                        type="email"
-                        value={username}
-                        onchange={handleUsernameChange}
-                        onkeypress={handleKeyPress}
-                        placeholder="Enter your email or username"
-                        required
-                        variant="label-stacked"
-                        class="login-input">
-                    </lightning-input>
-                </div>
-
-                <div class="form-group">
-                    <div class="password-container">
+                <!-- OAuth/Username Password Form -->
+                <template if:true={showUsernamePassword}>
+                    <div class="form-group">
                         <lightning-input
-                            label="Password"
-                            type={passwordInputType}
-                            value={password}
-                            onchange={handlePasswordChange}
+                            label="Email or Username"
+                            type="email"
+                            value={username}
+                            onchange={handleUsernameChange}
                             onkeypress={handleKeyPress}
-                            placeholder="Enter your password"
+                            placeholder="Enter your email or username"
                             required
                             variant="label-stacked"
-                            class="login-input password-input">
+                            class="login-input">
                         </lightning-input>
-                        <lightning-button-icon
-                            icon-name={passwordToggleIcon}
-                            variant="bare"
-                            onclick={togglePasswordVisibility}
-                            alternative-text="Toggle password visibility"
-                            class="password-toggle">
-                        </lightning-button-icon>
                     </div>
-                </div>
+
+                    <div class="form-group">
+                        <div class="password-container">
+                            <lightning-input
+                                label="Password"
+                                type={passwordInputType}
+                                value={password}
+                                onchange={handlePasswordChange}
+                                onkeypress={handleKeyPress}
+                                placeholder="Enter your password"
+                                required
+                                variant="label-stacked"
+                                class="login-input password-input">
+                            </lightning-input>
+                            <lightning-button-icon
+                                icon-name={passwordToggleIcon}
+                                variant="bare"
+                                onclick={togglePasswordVisibility}
+                                alternative-text="Toggle password visibility"
+                                class="password-toggle">
+                            </lightning-button-icon>
+                        </div>
+                    </div>
+
+                    <div class="form-links">
+                        <lightning-button
+                            label="Forgot Password?"
+                            variant="base"
+                            onclick={handleForgotPasswordClick}
+                            class="link-button">
+                        </lightning-button>
+                    </div>
+                </template>
+
+                <!-- SAML SSO Information -->
+                <template if:true={showSamlButton}>
+                    <div class="saml-info">
+                        <lightning-icon icon-name="utility:shield" size="medium" class="saml-icon"></lightning-icon>
+                        <h3 class="saml-title">Single Sign-On</h3>
+                        <p class="saml-description">
+                            Sign in securely using your organization's identity provider.
+                        </p>
+                    </div>
+                </template>
 
                 <div class="form-actions">
                     <lightning-button
-                        label="Sign In"
+                        label={loginButtonLabel}
                         variant="brand"
                         onclick={handleLogin}
                         disabled={isLoginDisabled}
+                        icon-name={showSamlButton ? 'utility:world' : ''}
                         class="login-button">
                     </lightning-button>
                     
@@ -62,15 +86,6 @@
                             </lightning-spinner>
                         </div>
                     </template>
-                </div>
-
-                <div class="form-links">
-                    <lightning-button
-                        label="Forgot Password?"
-                        variant="base"
-                        onclick={handleForgotPasswordClick}
-                        class="link-button">
-                    </lightning-button>
                 </div>
 
                 <div class="divider">

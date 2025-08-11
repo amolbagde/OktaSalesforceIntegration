@@ -1,0 +1,158 @@
+<apex:page controller="SamlCallbackController" showHeader="false" sidebar="false" standardStylesheets="false" docType="html-5.0">
+    <html>
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>SAML Authentication</title>
+        <style>
+            body {
+                font-family: 'Salesforce Sans', Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+            }
+            
+            .callback-container {
+                background: white;
+                border-radius: 16px;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+                padding: 40px;
+                max-width: 400px;
+                width: 100%;
+                margin: 20px;
+                text-align: center;
+            }
+            
+            .processing {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            
+            .spinner {
+                width: 40px;
+                height: 40px;
+                border: 4px solid #f3f3f3;
+                border-top: 4px solid #667eea;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+            
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            
+            .success-icon {
+                color: #28a745;
+                font-size: 48px;
+                margin-bottom: 16px;
+            }
+            
+            .error-icon {
+                color: #dc3545;
+                font-size: 48px;
+                margin-bottom: 16px;
+            }
+            
+            .title {
+                font-size: 24px;
+                font-weight: 600;
+                color: #2c3e50;
+                margin: 0 0 16px 0;
+            }
+            
+            .message {
+                font-size: 16px;
+                color: #7f8c8d;
+                margin: 0 0 24px 0;
+                line-height: 1.4;
+            }
+            
+            .error-message {
+                color: #dc3545;
+                font-weight: 500;
+            }
+            
+            .redirect-info {
+                font-size: 14px;
+                color: #6c757d;
+                margin-top: 16px;
+            }
+            
+            .retry-button {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 12px 24px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                text-decoration: none;
+                display: inline-block;
+                transition: transform 0.2s ease;
+            }
+            
+            .retry-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="callback-container">
+            <apex:outputPanel rendered="{!isProcessing}">
+                <div class="processing">
+                    <div class="spinner"></div>
+                    <h1 class="title">Processing Authentication</h1>
+                    <p class="message">Please wait while we complete your sign-in...</p>
+                </div>
+            </apex:outputPanel>
+            
+            <apex:outputPanel rendered="{!!isProcessing && !hasError}">
+                <div class="success-icon">✓</div>
+                <h1 class="title">Authentication Successful</h1>
+                <p class="message">You have been successfully authenticated. Redirecting you now...</p>
+                <div class="redirect-info">
+                    If you are not redirected automatically, 
+                    <a href="{!URLFOR($Page.Dashboard)}" class="retry-button">click here</a>
+                </div>
+            </apex:outputPanel>
+            
+            <apex:outputPanel rendered="{!hasError}">
+                <div class="error-icon">✗</div>
+                <h1 class="title">Authentication Failed</h1>
+                <p class="message error-message">
+                    <apex:outputText value="{!errorMessage}" escape="false"/>
+                </p>
+                <a href="/login" class="retry-button">Try Again</a>
+            </apex:outputPanel>
+        </div>
+        
+        <apex:outputPanel rendered="{!!isProcessing && !hasError}">
+            <script>
+                // Auto-redirect after successful authentication
+                setTimeout(function() {
+                    var redirectUrl = '{!JSENCODE(relayState)}';
+                    if (redirectUrl && redirectUrl !== '') {
+                        try {
+                            redirectUrl = decodeURIComponent(redirectUrl);
+                        } catch(e) {
+                            console.log('Error decoding redirect URL:', e);
+                        }
+                        window.location.href = redirectUrl;
+                    } else {
+                        window.location.href = '/dashboard';
+                    }
+                }, 2000); // 2 second delay for user feedback
+            </script>
+        </apex:outputPanel>
+    </body>
+    </html>
+</apex:page>
