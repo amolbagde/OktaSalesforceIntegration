@@ -25,6 +25,69 @@ public with sharing class UserManagementController {
     }
     
     @AuraEnabled
+    public static UserManagementResponse getAuthenticationMethod() {
+        try {
+            OktaService.OktaResponse oktaResponse = OktaService.getAuthenticationMethod();
+            
+            if (oktaResponse.success) {
+                return new UserManagementResponse(true, 'Authentication method retrieved', oktaResponse.data);
+            } else {
+                return new UserManagementResponse(false, oktaResponse.message, null);
+            }
+        } catch (Exception e) {
+            System.debug('Error in getAuthenticationMethod: ' + e.getMessage());
+            return new UserManagementResponse(false, 'Failed to get authentication method: ' + e.getMessage(), null);
+        }
+    }
+
+    @AuraEnabled
+    public static UserManagementResponse initiateSamlLogin(String relayState) {
+        try {
+            OktaService.OktaResponse oktaResponse = OktaService.initiateSamlAuthentication(relayState);
+            
+            if (oktaResponse.success) {
+                return new UserManagementResponse(true, 'SAML request initiated', oktaResponse.data);
+            } else {
+                return new UserManagementResponse(false, oktaResponse.message, null);
+            }
+        } catch (Exception e) {
+            System.debug('Error in initiateSamlLogin: ' + e.getMessage());
+            return new UserManagementResponse(false, 'SAML login failed: ' + e.getMessage(), null);
+        }
+    }
+
+    @AuraEnabled
+    public static UserManagementResponse processSamlLogin(String samlResponse) {
+        try {
+            OktaService.OktaResponse oktaResponse = OktaService.processSamlResponse(samlResponse);
+            
+            if (oktaResponse.success) {
+                OktaService.OktaAuthResult authResult = (OktaService.OktaAuthResult) oktaResponse.data;
+                
+                // Create or update user session
+                UserSession userSession = new UserSession();
+                userSession.email = authResult.user.email;
+                userSession.firstName = authResult.user.firstName;
+                userSession.lastName = authResult.user.lastName;
+                userSession.userId = authResult.user.login;
+                // For SAML, we don't have OAuth tokens, use Salesforce session
+                userSession.accessToken = UserInfo.getSessionId();
+                userSession.expiresAt = DateTime.now().addHours(8); // Default 8-hour session
+                
+                // Store session in custom object or cache
+                storeUserSession(userSession);
+                
+                return new UserManagementResponse(true, 'SAML login successful', userSession);
+            } else {
+                return new UserManagementResponse(false, oktaResponse.message, null);
+            }
+        } catch (Exception e) {
+            System.debug('Error in processSamlLogin: ' + e.getMessage());
+            return new UserManagementResponse(false, 'SAML login processing failed: ' + e.getMessage(), null);
+        }
+    }
+
+    @AuraEnabled
     public static UserManagementResponse loginUser(String username, String password) {
         try {
             OktaService.OktaResponse oktaResponse = OktaService.authenticateUser(username, password);

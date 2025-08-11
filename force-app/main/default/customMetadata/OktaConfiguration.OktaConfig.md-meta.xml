@@ -22,4 +22,30 @@
         <field>ApiToken__c</field>
         <value xsi:type="xsd:string">your-api-token</value>
     </values>
+    <values>
+        <field>AuthenticationMethod__c</field>
+        <value xsi:type="xsd:string">SAML</value>
+    </values>
+    <values>
+        <field>SamlIssuer__c</field>
+        <value xsi:type="xsd:string">http://www.okta.com/your-issuer-id</value>
+    </values>
+    <values>
+        <field>SamlSsoUrl__c</field>
+        <value xsi:type="xsd:string">https://your-okta-domain.okta.com/app/your-app-id/sso/saml</value>
+    </values>
+    <values>
+        <field>SamlCertificate__c</field>
+        <value xsi:type="xsd:string">-----BEGIN CERTIFICATE-----
+YOUR_SAML_CERTIFICATE_CONTENT_HERE
+-----END CERTIFICATE-----</value>
+    </values>
+    <values>
+        <field>SamlCallbackUrl__c</field>
+        <value xsi:type="xsd:string">https://your-community.force.com/saml/callback</value>
+    </values>
+    <values>
+        <field>SamlLogoutUrl__c</field>
+        <value xsi:type="xsd:string">https://your-okta-domain.okta.com/app/your-app-id/slo/saml</value>
+    </values>
 </CustomMetadata>

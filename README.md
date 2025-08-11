@@ -1,11 +1,12 @@
 # Okta-Salesforce Integration
 
-A complete Salesforce Lightning Web Component (LWC) solution for user authentication and management with Okta integration, designed for Experience Cloud community pages.
+A complete Salesforce Lightning Web Component (LWC) solution for user authentication and management with Okta integration, designed for Experience Cloud community pages. Supports both **SAML 2.0** and **OAuth 2.0** authentication methods.
 
 ## 🚀 Features
 
 ### Core Functionality
-- **User Authentication** - Secure login with Okta integration
+- **Dual Authentication** - Support for both SAML 2.0 and OAuth 2.0
+- **Enterprise SSO** - Seamless SAML-based single sign-on
 - **User Registration** - Self-service account creation with validation
 - **Profile Management** - Update user information seamlessly
 - **Session Management** - Automatic token refresh and logout
@@ -18,7 +19,8 @@ A complete Salesforce Lightning Web Component (LWC) solution for user authentica
 
 ### Security
 - **Okta Integration** - Enterprise-grade identity management
-- **Token-based Auth** - Secure JWT token handling
+- **SAML Security** - XML signature validation and certificate verification
+- **Token-based Auth** - Secure JWT token handling for OAuth flows
 - **Input Validation** - Comprehensive client and server-side validation
 - **Error Handling** - Graceful error management without exposing sensitive data
 
@@ -30,11 +32,16 @@ A complete Salesforce Lightning Web Component (LWC) solution for user authentica
 - **`userProfile`** - Comprehensive profile management with edit capabilities
 
 ### Apex Classes
-- **`OktaService`** - Core service for Okta API integration
+- **`OktaService`** - Core service for Okta API integration (SAML & OAuth)
 - **`UserManagementController`** - Controller for user operations
+- **`SamlUtility`** - SAML request/response processing utilities
+- **`SamlCallbackController`** - SAML authentication callback handler
+
+### Visualforce Pages
+- **`SamlCallback`** - SAML response processing page
 
 ### Configuration
-- **`OktaConfiguration__mdt`** - Custom metadata for Okta settings
+- **`OktaConfiguration__mdt`** - Custom metadata for Okta settings (supports both auth methods)
 
 ## 🛠️ Quick Start
 
@@ -70,8 +77,9 @@ For detailed setup instructions, see [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md
 ## 📱 Screenshots
 
 ### Login Screen
-- Clean, modern interface with Okta integration
-- Password visibility toggle
+- Auto-detects authentication method (SAML vs OAuth)
+- SAML: Single-click SSO with enterprise identity provider
+- OAuth: Username/password with visibility toggle
 - Responsive design for all devices
 
 ### Registration Form
@@ -99,16 +107,19 @@ For detailed setup instructions, see [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md
 ## 🔧 Configuration
 
 ### Okta Setup
-1. Create OIDC application in Okta
-2. Configure redirect URIs for your community
-3. Generate API token for user management
-4. Set up trusted origins and CORS
+1. **SAML (Recommended)**: Create SAML 2.0 application in Okta
+2. **OAuth (Alternative)**: Create OIDC application in Okta
+3. Configure redirect URIs and callback URLs
+4. Generate API token for user management
+5. Set up trusted origins and CORS
+6. Download SAML certificate (for SAML setup)
 
 ### Salesforce Setup
 1. Deploy all metadata components
 2. Configure Remote Site Settings for Okta
-3. Update Custom Metadata with Okta credentials
+3. Update Custom Metadata with authentication method and credentials
 4. Set up Experience Cloud permissions
+5. Configure SAML callback page permissions (for SAML)
 
 ## 🧪 Testing
 

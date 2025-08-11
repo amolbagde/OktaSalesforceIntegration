@@ -2,21 +2,39 @@
 
 ## Overview
 
-This project provides a complete Salesforce Lightning Web Component (LWC) solution for user authentication and management with Okta integration for community pages. It includes login, user registration, and user profile management components.
+This project provides a complete Salesforce Lightning Web Component (LWC) solution for user authentication and management with Okta integration for community pages. It supports both **SAML 2.0** and **OAuth 2.0** authentication methods, with SAML being the recommended approach for enterprise environments.
 
 ## Components Included
 
 ### Apex Classes
-- **OktaService.cls** - Main service class for Okta API integration
+- **OktaService.cls** - Main service class for Okta API integration (supports both SAML and OAuth)
 - **UserManagementController.cls** - Controller for user management operations
+- **SamlUtility.cls** - Utility class for SAML request/response handling
+- **SamlCallbackController.cls** - Controller for SAML callback processing
 
 ### Lightning Web Components
-- **oktaLogin** - Login screen with Okta authentication
+- **oktaLogin** - Login screen with Okta authentication (auto-detects SAML vs OAuth)
 - **userRegistration** - User registration/creation component
 - **userProfile** - User profile management component
 
+### Visualforce Pages
+- **SamlCallback** - SAML response callback handler page
+
 ### Custom Metadata
-- **OktaConfiguration__mdt** - Configuration settings for Okta integration
+- **OktaConfiguration__mdt** - Configuration settings for Okta integration (supports both authentication methods)
+
+## Authentication Methods Comparison
+
+| Feature | SAML 2.0 | OAuth 2.0 |
+|---------|----------|-----------|
+| **Use Case** | Enterprise SSO | API Access & Social Login |
+| **Security** | High (XML signatures) | High (JWT tokens) |
+| **User Experience** | Seamless SSO | Username/Password or Social |
+| **Session Management** | SAML assertions | Access/Refresh tokens |
+| **Enterprise Ready** | ✅ Yes | ⚠️ Requires additional setup |
+| **Mobile Support** | ✅ Yes | ✅ Yes |
+| **Complexity** | Medium | Low |
+| **Recommended For** | Enterprise, existing SAML infrastructure | New implementations, API-first |
 
 ## Prerequisites
 
@@ -27,7 +45,52 @@ This project provides a complete Salesforce Lightning Web Component (LWC) soluti
 
 ## Okta Setup
 
-### 1. Create Okta Application
+### Option 1: SAML 2.0 Setup (Recommended for Enterprise)
+
+#### 1. Create SAML Application in Okta
+
+1. Log into your Okta Admin Console
+2. Navigate to **Applications** > **Applications**
+3. Click **Create App Integration**
+4. Select **SAML 2.0**
+5. Configure the SAML application:
+
+**General Settings:**
+- **App name**: Salesforce Community SAML Integration
+- **App logo**: Upload your organization logo (optional)
+
+**SAML Settings:**
+- **Single sign on URL**: `https://your-community-domain.force.com/apex/SamlCallback`
+- **Audience URI (SP Entity ID)**: `https://your-community-domain.force.com`
+- **Default RelayState**: Leave blank or set to `/dashboard`
+- **Name ID format**: EmailAddress
+- **Application username**: Email
+
+**Attribute Statements:**
+- `firstName` → `user.firstName`
+- `lastName` → `user.lastName`
+- `email` → `user.email`
+
+#### 2. Configure SAML Response
+
+In the **SAML Settings** section:
+- **Response**: Signed
+- **Assertion Signature**: Signed
+- **Signature Algorithm**: RSA-SHA256
+- **Digest Algorithm**: SHA256
+- **Assertion Encryption**: Unencrypted (unless you have specific requirements)
+
+#### 3. Download SAML Certificate
+
+1. After creating the application, go to the **Sign On** tab
+2. Under **SAML 2.0**, click **View Setup Instructions**
+3. Copy the **X.509 Certificate** content
+4. Note the **Identity Provider Single Sign-On URL**
+5. Note the **Identity Provider Issuer**
+
+### Option 2: OAuth 2.0 Setup (Alternative)
+
+#### 1. Create OAuth Application in Okta
 
 1. Log into your Okta Admin Console
 2. Navigate to **Applications** > **Applications**
@@ -54,7 +117,14 @@ This project provides a complete Salesforce Lightning Web Component (LWC) soluti
 
 ### 3. Note Configuration Values
 
-Save these values for Salesforce configuration:
+#### For SAML Setup:
+- **Okta Domain**: `your-okta-domain.okta.com`
+- **SAML Issuer**: From setup instructions (e.g., `http://www.okta.com/exk1abc2def3ghi4jkl5`)
+- **SAML SSO URL**: From setup instructions (e.g., `https://your-domain.okta.com/app/exk1abc2def3ghi4jkl5/sso/saml`)
+- **SAML Certificate**: X.509 certificate content
+- **API Token**: Generated in step 2 (for user management operations)
+
+#### For OAuth Setup:
 - **Okta Domain**: `your-okta-domain.okta.com`
 - **Client ID**: From your created application
 - **Client Secret**: From your created application (if using confidential client)
@@ -98,12 +168,25 @@ sfdx force:source:status -u your-org-alias
 1. Navigate to **Setup** > **Custom Metadata Types**
 2. Find **Okta Configuration**
 3. Click **New** or edit existing **OktaConfig** record
-4. Update the values:
-   - **Okta Domain**: `your-okta-domain.okta.com`
-   - **Client ID**: Your Okta application client ID
-   - **Client Secret**: Your Okta application client secret
-   - **Redirect URI**: `https://your-community.force.com/auth/callback`
-   - **API Token**: Your Okta API token
+4. Update the values based on your chosen authentication method:
+
+#### For SAML Authentication:
+- **Authentication Method**: SAML
+- **Okta Domain**: `your-okta-domain.okta.com`
+- **SAML Issuer**: Your Okta SAML issuer URL
+- **SAML SSO URL**: Your Okta SAML SSO endpoint
+- **SAML Certificate**: Your X.509 certificate content (include BEGIN/END CERTIFICATE lines)
+- **SAML Callback URL**: `https://your-community.force.com/apex/SamlCallback`
+- **SAML Logout URL**: `https://your-domain.okta.com/app/your-app-id/slo/saml`
+- **API Token**: Your Okta API token (for user management)
+
+#### For OAuth Authentication:
+- **Authentication Method**: OAuth
+- **Okta Domain**: `your-okta-domain.okta.com`
+- **Client ID**: Your Okta application client ID
+- **Client Secret**: Your Okta application client secret
+- **Redirect URI**: `https://your-community.force.com/auth/callback`
+- **API Token**: Your Okta API token
 
 ### 2. Set Remote Site Settings
 
@@ -159,6 +242,8 @@ In Okta Admin Console:
 - Store sensitive configuration in **Custom Metadata** or **Custom Settings**
 - Use **Named Credentials** for enhanced security (optional)
 - Implement proper **error handling** without exposing sensitive information
+- For SAML: Validate SAML signatures and certificates
+- For OAuth: Secure client secrets and API tokens
 
 ### 2. Community Security
 
@@ -166,6 +251,7 @@ In Okta Admin Console:
 - Configure **CSP (Content Security Policy)** headers
 - Implement **session timeout** settings
 - Use **reCAPTCHA** for registration (optional enhancement)
+- For SAML: Ensure callback URLs are properly secured
 
 ### 3. Okta Security
 
@@ -173,6 +259,16 @@ In Okta Admin Console:
 - Configure **Password Policies**
 - Set up **Rate Limiting**
 - Monitor **Security Events**
+- For SAML: Use signed assertions and proper certificate validation
+- Regular certificate rotation and monitoring
+
+### 4. SAML-Specific Security
+
+- **Certificate Validation**: Ensure proper X.509 certificate validation
+- **Signature Verification**: Validate SAML response signatures
+- **Assertion Encryption**: Consider encrypting sensitive assertions
+- **Time-based Validation**: Implement NotBefore and NotOnOrAfter checks
+- **Replay Attack Prevention**: Use unique request IDs and timestamps
 
 ## Testing
 
@@ -195,10 +291,23 @@ public class OktaServiceTest {
 
 ### 2. Integration Testing
 
+#### For SAML Authentication:
+1. Test SAML SSO login flow
+2. Verify SAML response parsing and user creation
+3. Test RelayState handling for post-login redirection
+4. Test SAML logout functionality
+5. Verify certificate validation and signature verification
+
+#### For OAuth Authentication:
 1. Test complete user flow: Registration → Login → Profile Update
-2. Test error scenarios and edge cases
-3. Verify Okta integration with actual API calls
-4. Test mobile responsiveness
+2. Test token refresh and session management
+3. Verify OAuth flow with authorization codes
+
+#### General Testing:
+1. Test error scenarios and edge cases
+2. Verify Okta integration with actual API calls
+3. Test mobile responsiveness
+4. Cross-browser compatibility testing
 
 ### 3. User Acceptance Testing
 
